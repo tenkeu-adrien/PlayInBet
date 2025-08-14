@@ -1,52 +1,69 @@
 'use client'
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '../../../../context/AuthContext';
 import GlassCard from '@/components/ui/GlassCard';
 import { FiSend, FiClock, FiUsers, FiAward, FiMessageSquare } from 'react-icons/fi';
+
+// Données fictives pour un duel
+const mockDuel = {
+  id: '123',
+  game: 'Fortnite',
+  mode: 'Battle Royale Solo',
+  status: 'En cours',
+  endTime: new Date(Date.now() + 3600000).toISOString(), // 1 heure dans le futur
+  players: [
+    { id: '1', username: 'ProGamer99', avatar: 'P' },
+    { id: '2', username: 'NinjaWarior', avatar: 'N' },
+    { id: '3', username: 'VictoryQueen', avatar: 'V' },
+  ],
+  maxPlayers: 4,
+  prize: 50
+};
+
+// Messages initiaux fictifs
+const initialMessages = [
+  {
+    id: 1,
+    user: 'ProGamer99',
+    avatar: 'P',
+    text: 'Prêt à gagner ce duel !',
+    timestamp: new Date(Date.now() - 60000).toISOString()
+  },
+  {
+    id: 2,
+    user: 'NinjaWarior',
+    avatar: 'N',
+    text: 'Bon courage à tous !',
+    timestamp: new Date(Date.now() - 30000).toISOString()
+  }
+];
 
 export default function DuelRoomPage() {
   const { id } = useParams();
   const router = useRouter();
   const { user } = useAuth();
   const [duel, setDuel] = useState(null);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(initialMessages);
   const [message, setMessage] = useState('');
   const [timeLeft, setTimeLeft] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    const fetchDuel = async () => {
-      try {
-        const response = await fetch(`/api/duels/${id}`);
-        if (!response.ok) throw new Error('Duel non trouvé');
-        const data = await response.json();
-        setDuel(data);
-        
-        // Calculer le temps restant
-        const endTime = new Date(data.endTime).getTime();
-        const now = new Date().getTime();
-        setTimeLeft(Math.max(0, Math.floor((endTime - now) / 1000)));
-        
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
+    // Simuler le chargement des données
+    const timer = setTimeout(() => {
+      setDuel(mockDuel);
+      
+      // Calculer le temps restant
+      const endTime = new Date(mockDuel.endTime).getTime();
+      const now = new Date().getTime();
+      setTimeLeft(Math.max(0, Math.floor((endTime - now) / 1000)));
+      
+      setLoading(false);
+    }, 1000);
 
-    fetchDuel();
-
-    // Simuler WebSocket pour les messages
-    const ws = new WebSocket(`wss://your-api.com/duels/${id}/ws`);
-    ws.onmessage = (e) => {
-      const newMessage = JSON.parse(e.data);
-      setMessages(prev => [...prev, newMessage]);
-    };
-
-    return () => ws.close();
+    return () => clearTimeout(timer);
   }, [id]);
 
   useEffect(() => {
@@ -58,13 +75,13 @@ export default function DuelRoomPage() {
 
   const handleSendMessage = (e) => {
     e.preventDefault();
-    if (!message.trim()) return;
+    if (!message.trim() || !user) return;
 
-    // Envoyer le message via WebSocket (simulé)
+    // Ajouter le nouveau message
     const newMessage = {
       id: Date.now(),
       user: user.username,
-      avatar: user.avatar,
+      avatar: user.username.charAt(0),
       text: message,
       timestamp: new Date().toISOString()
     };
@@ -85,7 +102,7 @@ export default function DuelRoomPage() {
   };
 
   if (loading) return <div className="text-center py-8">Chargement...</div>;
-  if (error) return <div className="text-center py-8 text-[#ef4444]">{error}</div>;
+  if (!duel) return <div className="text-center py-8 text-[#ef4444]">Duel non trouvé</div>;
 
   return (
     <div className="max-w-6xl mx-auto py-8 px-4">
@@ -134,11 +151,20 @@ export default function DuelRoomPage() {
                 {duel.players.map(player => (
                   <div key={player.id} className="flex items-center bg-[#1f2937] px-3 py-2 rounded-lg">
                     <div className="w-8 h-8 rounded-full bg-[#6366f1] flex items-center justify-center mr-2">
-                      <span className="text-xs font-bold">{player.username.charAt(0)}</span>
+                      <span className="text-xs font-bold">{player.avatar}</span>
                     </div>
                     <span>{player.username}</span>
                   </div>
                 ))}
+                {/* Ajouter le joueur actuel s'il n'est pas déjà dans la liste */}
+                {user && !duel.players.some(p => p.id === user.id) && (
+                  <div className="flex items-center bg-[#1f2937] px-3 py-2 rounded-lg">
+                    <div className="w-8 h-8 rounded-full bg-[#6366f1] flex items-center justify-center mr-2">
+                      <span className="text-xs font-bold">{user.username.charAt(0)}</span>
+                    </div>
+                    <span>{user.username}</span>
+                  </div>
+                )}
               </div>
             </div>
           </GlassCard>
@@ -162,7 +188,7 @@ export default function DuelRoomPage() {
             {messages.map(msg => (
               <div key={msg.id} className="flex items-start">
                 <div className="w-8 h-8 rounded-full bg-[#8b5cf6] flex items-center justify-center mr-3">
-                  <span className="text-xs font-bold">{msg.user.charAt(0)}</span>
+                  <span className="text-xs font-bold">{msg.avatar}</span>
                 </div>
                 <div>
                   <div className="font-medium">{msg.user}</div>
