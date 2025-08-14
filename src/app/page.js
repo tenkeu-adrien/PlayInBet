@@ -190,3 +190,8 @@ export default function RegisterPage() {
     </div>
   );
 }
+
+
+
+  // <WalletSummary />
+  //           <RecentTransactions />
