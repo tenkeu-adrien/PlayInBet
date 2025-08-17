@@ -1285,7 +1285,7 @@ export default function DashboardPage() {
 
     return (
       <div className="space-y-6">
-        <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-6">
+        <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-6 ">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold text-white">Mon Profil</h2>
             {!editMode ? (
@@ -1467,7 +1467,7 @@ export default function DashboardPage() {
         <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-6">
           <h3 className="text-lg font-bold text-white mb-4">Historique des parties</h3>
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="min-w-min w-full">
               <thead>
                 <tr className="border-b border-white/10">
                   <th className="text-left py-2 text-gray-400 font-normal">Date</th>
@@ -1517,125 +1517,131 @@ export default function DashboardPage() {
   const LeaderboardTab = () => {
     return (
       <div className="space-y-6">
-        <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-white">Classement des Joueurs</h2>
-            <div className="flex items-center">
-              <span className="text-gray-400 mr-3">Trier par:</span>
-              <select 
-                value={leaderboardType}
-                onChange={(e) => setLeaderboardType(e.target.value)}
-                className="bg-white/5 text-white border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              >
-                <option value="wins">Victoires</option>
-                <option value="earnings">Gains</option>
-                <option value="winRate">Taux de victoire</option>
-              </select>
-            </div>
-          </div>
-          
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-white/10">
-                  <th className="text-left py-3 text-gray-400 font-normal">Rang</th>
-                  <th className="text-left py-3 text-gray-400 font-normal">Joueur</th>
-                  <th className="text-left py-3 text-gray-400 font-normal">Victoires</th>
-                  <th className="text-left py-3 text-gray-400 font-normal">Défaites</th>
-                  <th className="text-left py-3 text-gray-400 font-normal">Taux</th>
-                  <th className="text-left py-3 text-gray-400 font-normal">Gains</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedLeaderboard.map((player, index) => (
-                  <tr 
-                    key={player.rank} 
-                    className={`border-b border-white/10 hover:bg-white/5 ${
-                      player.username === profileData.username ? 'bg-indigo-500/10' : ''
-                    }`}
-                  >
-                    <td className="py-4">
-                      <span className={`flex items-center justify-center w-6 h-6 rounded-full ${
-                        index === 0 ? 'bg-yellow-500 text-white' :
-                        index === 1 ? 'bg-gray-400 text-white' :
-                        index === 2 ? 'bg-amber-700 text-white' :
-                        'bg-white/5 text-white'
-                      }`}>
-                        {index + 1}
-                      </span>
-                    </td>
-                    <td className="py-4 text-white">
-                      <div className="flex items-center">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-xs text-white mr-3">
-                          {player.username.charAt(0)}
-                        </div>
-                        {player.username}
-                        {player.username === profileData.username && (
-                          <span className="ml-2 bg-indigo-500 text-white text-xs px-2 py-0.5 rounded-full">Vous</span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="py-4 text-white">{player.wins}</td>
-                    <td className="py-4 text-white">{player.losses}</td>
-                    <td className="py-4 text-white">{player.winRate}%</td>
-                    <td className="py-4 text-white">${player.earnings}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          
-          <div className="flex justify-between items-center mt-4">
-            <button className="text-gray-400 hover:text-white flex items-center">
-              <FiChevronLeft className="mr-1" />
-              Précédent
-            </button>
-            <div className="flex space-x-2">
-              {[1, 2, 3, 4, 5].map(page => (
-                <button 
-                  key={page}
-                  className={`w-8 h-8 rounded-full ${
-                    page === 1 
-                      ? 'bg-indigo-600 text-white' 
-                      : 'bg-white/5 text-gray-400 hover:bg-white/10'
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
-            </div>
-            <button className="text-gray-400 hover:text-white flex items-center">
-              Suivant
-              <FiChevronRight className="ml-1" />
-            </button>
+      {/* Classement des Joueurs */}
+      <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-6">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6 space-y-4 md:space-y-0">
+          <h2 className="text-xl font-bold text-white">Classement des Joueurs</h2>
+          <div className="flex items-center">
+            <span className="text-gray-400 mr-3">Trier par:</span>
+            <select 
+              value={leaderboardType}
+              onChange={(e) => setLeaderboardType(e.target.value)}
+              className="bg-white/5 text-white border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option value="wins">Victoires</option>
+              <option value="earnings">Gains</option>
+              <option value="winRate">Taux de victoire</option>
+            </select>
           </div>
         </div>
         
-        <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-6">
-          <h3 className="text-lg font-bold text-white mb-4">Vos statistiques</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-gradient-to-br from-indigo-600/20 to-purple-600/20 p-4 rounded-lg">
-              <p className="text-gray-400">Classement</p>
-              <p className="text-2xl font-bold text-white">
-                #{sortedLeaderboard.findIndex(p => p.username === profileData.username) + 1}
-              </p>
-            </div>
-            <div className="bg-gradient-to-br from-blue-600/20 to-cyan-600/20 p-4 rounded-lg">
-              <p className="text-gray-400">Victoires</p>
-              <p className="text-2xl font-bold text-white">{profileData.wins}</p>
-            </div>
-            <div className="bg-gradient-to-br from-green-600/20 to-emerald-600/20 p-4 rounded-lg">
-              <p className="text-gray-400">Gains totaux</p>
-              <p className="text-2xl font-bold text-white">
-                ${transactions
-                  .filter(t => t.type === 'win')
-                  .reduce((sum, t) => sum + t.amount, 0)
-                }
-              </p>
-            </div>
+        {/* Table visible uniquement sur desktop */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="min-w-max w-full">
+            <thead>
+              <tr className="border-b border-white/10">
+                <th className="text-left py-3 text-gray-400 font-normal">Rang</th>
+                <th className="text-left py-3 text-gray-400 font-normal">Joueur</th>
+                <th className="text-left py-3 text-gray-400 font-normal">Victoires</th>
+                <th className="text-left py-3 text-gray-400 font-normal">Défaites</th>
+                <th className="text-left py-3 text-gray-400 font-normal">Taux</th>
+                <th className="text-left py-3 text-gray-400 font-normal">Gains</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sortedLeaderboard.map((player, index) => (
+                <tr 
+                  key={player.rank} 
+                  className={`border-b border-white/10 hover:bg-white/5 ${
+                    player.username === profileData.username ? 'bg-indigo-500/10' : ''
+                  }`}
+                >
+                  <td className="py-4">
+                    <span className={`flex items-center justify-center w-6 h-6 rounded-full ${
+                      index === 0 ? 'bg-yellow-500 text-white' :
+                      index === 1 ? 'bg-gray-400 text-white' :
+                      index === 2 ? 'bg-amber-700 text-white' :
+                      'bg-white/5 text-white'
+                    }`}>
+                      {index + 1}
+                    </span>
+                  </td>
+                  <td className="py-4 text-white">
+                    <div className="flex items-center">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-xs text-white mr-3">
+                        {player.username.charAt(0)}
+                      </div>
+                      {player.username}
+                      {player.username === profileData.username && (
+                        <span className="ml-2 bg-indigo-500 text-white text-xs px-2 py-0.5 rounded-full">Vous</span>
+                      )}
+                    </div>
+                  </td>
+                  <td className="py-4 text-white">{player.wins}</td>
+                  <td className="py-4 text-white">{player.losses}</td>
+                  <td className="py-4 text-white">{player.winRate}%</td>
+                  <td className="py-4 text-white">${player.earnings}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        
+        {/* Pagination visible partout */}
+        <div className="flex flex-col md:flex-row justify-between items-center mt-4 space-y-3 md:space-y-0">
+          <button className="text-gray-400 hover:text-white flex items-center">
+            <FiChevronLeft className="mr-1" />
+            Précédent
+          </button>
+          <div className="flex space-x-2">
+            {[1, 2, 3, 4, 5].map(page => (
+              <button 
+                key={page}
+                className={`w-8 h-8 rounded-full ${
+                  page === 1 
+                    ? 'bg-indigo-600 text-white' 
+                    : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+          <button className="text-gray-400 hover:text-white flex items-center">
+            Suivant
+            <FiChevronRight className="ml-1" />
+          </button>
+        </div>
+      </div>
+      
+      {/* Vos statistiques */}
+      <div className="bg-white/5 backdrop-blur-lg border border-white/10 rounded-xl p-6">
+        <h3 className="text-lg font-bold text-white mb-4">Vos statistiques</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <div className="bg-gradient-to-br from-indigo-600/20 to-purple-600/20 p-4 rounded-lg">
+            <p className="text-gray-400">Classement</p>
+            <p className="text-2xl font-bold text-white">
+              #{sortedLeaderboard.findIndex(p => p.username === profileData.username) + 1}
+            </p>
+          </div>
+          <div className="bg-gradient-to-br from-blue-600/20 to-cyan-600/20 p-4 rounded-lg">
+            <p className="text-gray-400">Victoires</p>
+            <p className="text-2xl font-bold text-white">{profileData.wins}</p>
+          </div>
+          <div className="bg-gradient-to-br from-green-600/20 to-emerald-600/20 p-4 rounded-lg">
+            <p className="text-gray-400">Gains totaux</p>
+            <p className="text-2xl font-bold text-white">
+              ${transactions
+                .filter(t => t.type === 'win')
+                .reduce((sum, t) => sum + t.amount, 0)
+              }
+            </p>
           </div>
         </div>
       </div>
+    </div>
+    
+    
     );
   };
 
@@ -2261,8 +2267,8 @@ export default function DashboardPage() {
                   : 'text-gray-300 hover:bg-white/10 hover:text-white'
               }`}
             >
-              <FiSettings className="text-lg" />
-              {leftSidebarExpanded && <span className="ml-3">Paramètres</span>}
+              {/* <FiSettings className="text-lg" />
+              {leftSidebarExpanded && <span className="ml-3">Paramètres</span>} */}
             </button>
           </div>
         </nav>
@@ -2353,6 +2359,12 @@ export default function DashboardPage() {
                 >
                   <FiX />
                 </button>
+
+
+             
+
+
+
               </>
             ) : (
               <></>
@@ -2375,7 +2387,9 @@ export default function DashboardPage() {
                     <p className="text-xs text-gray-400 mt-1 text-right">
                       {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </p>
+                    
                   </div>
+                  
                 ))}
                 <div ref={messagesEndRef} />
               </div>
@@ -2437,8 +2451,39 @@ export default function DashboardPage() {
                       {chat.unread}
                     </span>
                   )}
+
+
+
+                  
                 </div>
+                
               ))}
+
+       {rightSidebarExpanded && (
+         <div className="absolute bottom-0 left-0 right-0 ml-1 mr-1">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    placeholder="Écrire un message..."
+                    className="w-full pl-4 pr-12 py-2 rounded-full bg-white/5 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                  />
+                  <button 
+                    onClick={handleSendMessage}
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-indigo-400"
+                  >
+                    <FiSend />
+                  </button>
+                </div>
+
+
+
+              </div>  )}
+
+
+
             </div>
           )}
         </div>
